@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd">
+<hibernate-reverse-engineering>
+  <schema-selection match-catalog="decks_flash"/>
+  <table-filter match-name="deck"/>
+  <table-filter match-name="score"/>
+  <table-filter match-name="flashcard"/>
+  <table-filter match-name="user"/>
+</hibernate-reverse-engineering>
