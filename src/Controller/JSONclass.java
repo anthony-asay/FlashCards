@@ -1,6 +1,7 @@
 package Controller;
 import Model.Deck;
 import Model.Flashcard;
+import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,6 +14,9 @@ import java.util.List;
 //import com.google.gson.reflect.TypeToken;
 import java.io.FileWriter;
 import java.lang.reflect.Type;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 /**
  *
  * @author Anthony
@@ -24,23 +28,29 @@ public class JSONclass {
     private static final String ITEMS_GET_URL = "http://jsontest.localhost/public/js/items.txt";
     private static final String POST_URL = "http://jsontest.localhost/index.php/welcome/addItemJson";
  
-//    public void AddItemJSON() throws IOException{
-//        Item item = new Item();
-//        Gson g = new Gson();
-//        List<Item> list = new ArrayList<Item>();
-//        list = item.items();
-//        List<Item> listOfItems = new ArrayList<Item>();
-//        Integer counter = list.size();
-//        Integer i = 0;
-//        while(i < counter)
-//        {
-//            listOfItems.add(list.get(i));
-//            i++;
-//        }
-//        String json = "array=" + listOfItems.toString();
-//        sendPOST(json, POST_URL);
-//        writeJsonToFile(listOfItems.toString());
-//    }
+    public void AddItemJSON() throws IOException{
+        Deck item = new Deck();
+        Gson g = new Gson();
+        List<Deck> list = new ArrayList<Deck>();
+        list = item.decks();
+        List<Deck> listOfItems = new ArrayList<Deck>();
+        Integer counter = list.size();
+        Integer i = 0;
+        while(i < counter)
+        {
+            listOfItems.add(list.get(i));
+            i++;
+        }
+        Set<Deck> itemSet = new HashSet<Deck>();
+        for(Iterator iterator = list.iterator(); iterator.hasNext();)
+        {
+            Deck itemOld = (Deck) iterator.next(); 
+            itemSet.add(itemOld);
+        }
+        String json = "array=" + itemSet.toString();
+        sendPOST(json, POST_URL);
+        writeJsonToFile(itemSet.toString());
+    }
 //    
 //    public List<Item> getItemsJSON() throws IOException
 //    {

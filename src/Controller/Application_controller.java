@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package Controller;
+import Model.User;
 import View.*;
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
@@ -14,29 +15,51 @@ import javax.swing.JPanel;
  */
 public class Application_controller {
     
-    private JFrame main = new MainFrameView();
+    private User user = new User();
     
     public void getMainFrame()
     {
-       main.setVisible(true);
-       //main.setLayout(new BorderLayout());
-       JPanel next = new PanelView();
-       //main.add(next, BorderLayout.CENTER);
-       main.setContentPane(next);
-       main.pack();
+        new Home().setVisible(true);
     }
     
-    public void getRegisterPanel(JPanel old)
+    public void getAddDeckView(JFrame view)
     {
-        System.out.println("hello");
-        main.remove(old);
-        JPanel next = new RegisterPanelView();
-        //main.add(next, BorderLayout.CENTER);
-        //main.repaint();
-         main.setContentPane(next);
-       main.pack();
-       main.repaint();
-       main.revalidate();
-      
+        view.dispose();
+        new AddDeckView().setVisible(true);
+    }
+    
+//    public void getAddItemView(JFrame view)
+//    {
+//        view.dispose();
+//        new AddItemView().setVisible(true);
+//    }
+//    
+//    public void getItemsView(JFrame view)
+//    {
+//        view.dispose();
+//        new ItemsView().setVisible(true);
+//    }
+//    
+    public void getMenuView(User user, JFrame view)
+    {
+        this.user = user;
+        view.dispose();
+        new MenuView().setVisible(true);
+    }
+    
+    public void getDeckListView(JFrame view)
+    {
+        view.dispose();
+        new DeckListView().setVisible(true);
+    }
+    
+    public User getUser() {
+        return this.user;
+    }
+    
+    public void getRegisterView(JFrame view)
+    {
+        view.dispose();
+        new RegisterView().setVisible(true);
     }
 }

@@ -24,6 +24,11 @@ public class Deck  implements java.io.Serializable {
 
     public Deck() {
     }
+    
+    @Override
+    public String toString(){
+        return "{\"id\":\""+this.id+"\",\"user\":\""+this.user.getId()+"\",\"name\":\""+this.name+"\",\"scores\":\""+this.scores.toString()+"\",\"flashcards\":\""+this.flashcards.toString()+"\"}";
+    }
 
     public Session acquireSession() {
         // All DB opening, connection etc. removed,
@@ -71,6 +76,12 @@ public class Deck  implements java.io.Serializable {
        this.name = name;
        this.scores = scores;
        this.flashcards = flashcards;
+    }
+    
+    public Deck(User user, String name)
+    {
+        this.user = user;
+        this.name = name;
     }
    
     public Integer getId() {

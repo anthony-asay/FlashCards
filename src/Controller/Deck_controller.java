@@ -11,6 +11,7 @@ import Model.Deck;
 import Model.Flashcard;
 import java.math.BigDecimal;
 import Controller.JSONclass;
+import Model.User;
 import java.io.IOException;
 import java.util.List; 
 import java.util.Date;
@@ -28,28 +29,28 @@ public class Deck_controller {
    private static SessionFactory factory;
    private static JSONclass json = new JSONclass();
    
-//   public Integer addItem(Medium medium, Date dateReleased, String title, Double rating, String synopsis, String author){
-//      Session session = HibernateUtil.getSessionFactory().openSession();
-//      Transaction tx = null;
-//      Integer itemID = null;
-//      try{
-//         tx = session.beginTransaction();
-//         Item item = new Item(medium, dateReleased, title, rating, synopsis, author);
-//         itemID = (Integer) session.save(item); 
-//         tx.commit();
-//          try {
-//              json.AddItemJSON();
-//          } catch (IOException ex) {
-//              Logger.getLogger(Item_controller.class.getName()).log(Level.SEVERE, null, ex);
-//          }
-//      }catch (HibernateException e) {
-//         if (tx!=null) tx.rollback();
-//         e.printStackTrace(); 
-//      }finally {
-//         session.close(); 
-//      }
-//      return itemID;
-//   }
+   public Integer addDeck(User user, String name){
+      Session session = HibernateUtil.getSessionFactory().openSession();
+      Transaction tx = null;
+      Integer itemID = null;
+      try{
+         tx = session.beginTransaction();
+         Deck deck = new Deck(user, name);
+         itemID = (Integer) session.save(deck); 
+         tx.commit();
+          try {
+              json.AddItemJSON();
+          } catch (IOException ex) {
+              Logger.getLogger(Deck_controller.class.getName()).log(Level.SEVERE, null, ex);
+          }
+      }catch (HibernateException e) {
+         if (tx!=null) tx.rollback();
+         e.printStackTrace(); 
+      }finally {
+         session.close(); 
+      }
+      return itemID;
+   }
 //   
 //   public void listItems( ){
 //      Session session = HibernateUtil.getSessionFactory().openSession();
@@ -73,12 +74,12 @@ public class Deck_controller {
 //      }
 //   }
 //   
-//   public List<Item> getItems()
-//    {
-//        Item item = new Item();
-//        List<Item> list = item.items();
-//        return list;
-//    }
+   public List<Deck> getItems()
+    {
+        Deck item = new Deck();
+        List<Deck> list = item.decks();
+        return list;
+    }
 //   
 //   public void updateItem(Integer itemId, Medium medium, Date dateReleased, String title, Double rating, String synopsis){
 //      Session session = HibernateUtil.getSessionFactory().openSession();
