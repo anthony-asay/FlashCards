@@ -28,7 +28,7 @@ public class JSONclass {
     private static final String ITEMS_GET_URL = "http://jsontest.localhost/public/js/items.txt";
     private static final String POST_URL = "http://jsontest.localhost/index.php/welcome/addItemJson";
  
-    public void AddItemJSON() throws IOException{
+    public void AddDeckJSON() throws IOException{
         Deck item = new Deck();
         Gson g = new Gson();
         List<Deck> list = new ArrayList<Deck>();

@@ -27,6 +27,12 @@ public class User  implements java.io.Serializable {
 
     public User() {
     }
+    
+    @Override
+    public String toString()
+    {
+        return " " + this.id + " " + this.nameUser;
+    }
 	
     public User(String nameUser, String password, Date dateCreated, String email) {
         this.nameUser = nameUser;

@@ -7,14 +7,16 @@ package View;
 
 import Controller.Application_controller;
 import Controller.Deck_controller;
-import Controller.Flashcard_controller;
+import Controller.HibernateUtil;
 import Model.Deck;
+import Model.Flashcard;
 import Model.User;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -24,39 +26,44 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  *
  * @author Anthony
  */
-public class DeckListView extends javax.swing.JFrame {
-
+public class DeckView extends javax.swing.JFrame {
     private Application_controller app = new Application_controller();
     private Deck_controller control = new Deck_controller();
     private Deck deck = new Deck();
-    private User user;
-    public DeckListView(User user) {
-        initComponents();
-        this.user = user;
-        List<Deck> deckList = control.getDecks();
-        displayResult(deckList);
+    public DeckView(Integer id) {
+        initComponents();  
+        this.deck = deck.getDeck(id);
+        jLabel1.setText(deck.getName());
+        
+        displayResult(deck.getFlashcards());
     }
-
-    private void displayResult(List resultList) 
+    
+    private void displayResult(Set resultList) 
     {
         Vector<String> tableHeaders = new Vector<String>();
         Vector tableData = new Vector();
         tableHeaders.add("Id");
-        tableHeaders.add("Deck Name");
-        tableHeaders.add("Select Deck");
+        tableHeaders.add("Answer");
+        tableHeaders.add("Question");
+        tableHeaders.add("Edit");
 
         for(Object o : resultList) 
         {
-            Deck item = (Deck)o;
+            Flashcard item = (Flashcard)o;
             Vector<Object> oneRow = new Vector<Object>();
             oneRow.add(item.getId());
-            oneRow.add(item.getName());
-            oneRow.add("Study Me");
+            oneRow.add(item.getAnswer());
+            oneRow.add(item.getQuestion());
+          
+            oneRow.add("Edit " + item.getId());
             tableData.add(oneRow);
         }
         resultTable.setModel(new DefaultTableModel(tableData, tableHeaders)
@@ -65,12 +72,11 @@ public class DeckListView extends javax.swing.JFrame {
             
             public boolean isCellEditable(int row, int column)
             {
-                return column == 2;
+                return column == 3;
             }
         });
-        
-        resultTable.getColumnModel().getColumn(2).setCellRenderer(new ClientsTableButtonRenderer());
-        resultTable.getColumnModel().getColumn(2).setCellEditor(new ClientsTableRenderer(new JCheckBox(), this, user));
+        resultTable.getColumnModel().getColumn(3).setCellRenderer(new DeckView.ClientsTableButtonRenderer());
+        resultTable.getColumnModel().getColumn(3).setCellEditor(new DeckView.ClientsTableRenderer(new JCheckBox(), this));
         resultTable.setPreferredScrollableViewportSize(resultTable.getPreferredSize());
         resultTable.setShowHorizontalLines(true);
         resultTable.setShowVerticalLines(false);
@@ -80,13 +86,31 @@ public class DeckListView extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        editDeck = new javax.swing.JToggleButton();
+        deleteDeckButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         resultTable = new javax.swing.JTable();
-        returnButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        addCard = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Choose a deck to study from");
+        jLabel1.setText("jLabel1");
+
+        editDeck.setText("Edit Deck");
+        editDeck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editDeckActionPerformed(evt);
+            }
+        });
+
+        deleteDeckButton.setText("Delete Deck");
+        deleteDeckButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteDeckButtonActionPerformed(evt);
+            }
+        });
 
         resultTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -101,10 +125,19 @@ public class DeckListView extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(resultTable);
 
-        returnButton.setText("Return");
-        returnButton.addActionListener(new java.awt.event.ActionListener() {
+        jLabel2.setText("Flashcards");
+
+        addCard.setText("Add Flashcard");
+        addCard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                returnButtonActionPerformed(evt);
+                addCardActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Return to Menu");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
             }
         });
 
@@ -116,32 +149,66 @@ public class DeckListView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(returnButton)
-                        .addGap(73, 73, 73)
-                        .addComponent(jLabel1))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 415, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(15, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(editDeck)
+                            .addComponent(deleteDeckButton)
+                            .addComponent(addCard))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton3)
+                        .addGap(148, 148, 148)
+                        .addComponent(jLabel1)))
+                .addContainerGap(21, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addGap(175, 175, 175))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(returnButton))
+                    .addComponent(jButton3))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(addCard)
+                        .addGap(20, 20, 20)
+                        .addComponent(editDeck)
+                        .addGap(18, 18, 18)
+                        .addComponent(deleteDeckButton)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void returnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnButtonActionPerformed
-        app.getMenuView(user, this);
-    }//GEN-LAST:event_returnButtonActionPerformed
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        app.getMenuView(deck.getUser(), this);
+    }//GEN-LAST:event_jButton3ActionPerformed
 
-    class ClientsTableButtonRenderer extends JButton implements TableCellRenderer
+    private void addCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCardActionPerformed
+        app.getAddCardView(this, deck);
+    }//GEN-LAST:event_addCardActionPerformed
+
+    private void editDeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editDeckActionPerformed
+        app.getEditDeck(this, deck);
+    }//GEN-LAST:event_editDeckActionPerformed
+
+    private void deleteDeckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteDeckButtonActionPerformed
+        control.deleteDeck(deck.getId());
+        app.getMenuView(deck.getUser(), this);
+    }//GEN-LAST:event_deleteDeckButtonActionPerformed
+
+   class ClientsTableButtonRenderer extends JButton implements TableCellRenderer
   {
     
     public ClientsTableButtonRenderer()
@@ -166,7 +233,7 @@ public class DeckListView extends javax.swing.JFrame {
     private int row, col;
     private JTable table;
 
-    public ClientsTableRenderer(JCheckBox checkBox, JFrame view, User user)
+    public ClientsTableRenderer(JCheckBox checkBox, JFrame view)
     {
       super(checkBox);
       this.view = view;
@@ -202,7 +269,7 @@ public class DeckListView extends javax.swing.JFrame {
     {
       if (clicked)
       {
-        app.getStudyView(this.view, Integer.parseInt(table.getValueAt(row, 0).toString()), user);
+        app.getEditCard(this.view, Integer.parseInt(table.getValueAt(row, 0).toString()));
         //JOptionPane.showMessageDialog(button, "Column with Value: "+table.getValueAt(row, 0) + " -  Clicked!");
       }
       clicked = false;
@@ -220,10 +287,16 @@ public class DeckListView extends javax.swing.JFrame {
       super.fireEditingStopped();
     }
   }
+    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addCard;
+    private javax.swing.JButton deleteDeckButton;
+    private javax.swing.JToggleButton editDeck;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable resultTable;
-    private javax.swing.JButton returnButton;
     // End of variables declaration//GEN-END:variables
 }

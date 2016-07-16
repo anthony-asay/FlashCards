@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package Controller;
+import Model.Deck;
 import Model.User;
 import View.*;
 import java.awt.BorderLayout;
@@ -22,35 +23,32 @@ public class Application_controller {
         new Home().setVisible(true);
     }
     
-    public void getAddDeckView(JFrame view)
-    {
-        view.dispose();
-        new AddDeckView().setVisible(true);
-    }
-    
-//    public void getAddItemView(JFrame view)
-//    {
-//        view.dispose();
-//        new AddItemView().setVisible(true);
-//    }
-//    
-//    public void getItemsView(JFrame view)
-//    {
-//        view.dispose();
-//        new ItemsView().setVisible(true);
-//    }
-//    
-    public void getMenuView(User user, JFrame view)
+    public void getAddDeckView(JFrame view, User user)
     {
         this.user = user;
         view.dispose();
-        new MenuView().setVisible(true);
+        new AddDeckView(this.user).setVisible(true);
+    }
+   
+    public void getMenuView(User user, JFrame view)
+    {
+        this.user = user;
+        System.out.println(user);
+        view.dispose();
+        new MenuView(user).setVisible(true);
     }
     
-    public void getDeckListView(JFrame view)
+    public void getMenuView(JFrame view)
     {
         view.dispose();
-        new DeckListView().setVisible(true);
+        new MenuView(this.user).setVisible(true);
+    }
+    
+    public void getDeckListView(JFrame view, User user)
+    {
+        this.user = user;
+        view.dispose();
+        new DeckListView(user).setVisible(true);
     }
     
     public User getUser() {
@@ -61,5 +59,53 @@ public class Application_controller {
     {
         view.dispose();
         new RegisterView().setVisible(true);
+    }
+    
+    public void getUserDecksView(JFrame view, User user)
+    {
+        view.dispose();
+        new UserDecksView(user).setVisible(true);
+    }
+    
+    public void getDeckView(JFrame view, Integer id)
+    {
+        view.dispose();
+        new DeckView(id).setVisible(true);
+    }
+    
+    public void getAddCardView(JFrame view, Deck deck)
+    {
+        view.dispose();
+        new AddFlashcardView(deck).setVisible(true);
+    }
+    
+    public void getEditDeck(JFrame view, Deck deck)
+    {
+        view.dispose();
+        new EditDeckView(deck).setVisible(true);
+    }
+    
+    public void getEditCard(JFrame view, Integer id)
+    {
+        view.dispose();
+        new EditCardView(id).setVisible(true);
+    }
+    
+    public void getStudyView(JFrame view, Integer id, User user)
+    {
+        view.dispose();
+        new StudyView(id, user).setVisible(true);
+    }
+    
+    public void getScoreView(JFrame view, User user)
+    {
+        view.dispose();
+        new ScoreView(user).setVisible(true);
+    }
+    
+    public void getStartStudy(JFrame view, User user, Deck deck, int seconds)
+    {
+        view.dispose();
+        new StartStudyView(user, deck, seconds).setVisible(true);
     }
 }

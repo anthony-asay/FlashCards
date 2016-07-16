@@ -141,7 +141,7 @@ public class RegisterView extends javax.swing.JFrame {
         
         if(!in_name.equals("") && !in_email.equals("") && !in_password.equals(""))
         {
-            Integer id = control.addUser(in_email, in_password, in_email);
+            Integer id = control.addUser(in_name, in_password, in_email);
             User user = control.getUser(id);
             app.getMenuView(user, this);
         }

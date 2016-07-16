@@ -15,6 +15,7 @@ import Model.User;
 import java.io.IOException;
 import java.util.List; 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator; 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +40,7 @@ public class Deck_controller {
          itemID = (Integer) session.save(deck); 
          tx.commit();
           try {
-              json.AddItemJSON();
+              json.AddDeckJSON();
           } catch (IOException ex) {
               Logger.getLogger(Deck_controller.class.getName()).log(Level.SEVERE, null, ex);
           }
@@ -74,49 +75,45 @@ public class Deck_controller {
 //      }
 //   }
 //   
-   public List<Deck> getItems()
+   public List<Deck> getDecks()
     {
         Deck item = new Deck();
         List<Deck> list = item.decks();
         return list;
     }
 //   
-//   public void updateItem(Integer itemId, Medium medium, Date dateReleased, String title, Double rating, String synopsis){
-//      Session session = HibernateUtil.getSessionFactory().openSession();
-//      Transaction tx = null;
-//      try{
-//         tx = session.beginTransaction();
-//         Item item = 
-//                    (Item)session.get(Item.class, itemId); 
-//         item.setMedium(medium);
-//         item.setDateReleased(dateReleased);
-//         item.setTitle(title);
-//         item.setRating(rating);
-//         item.setSynopsis(synopsis);
-//		 session.update(item); 
-//         tx.commit();
-//      }catch (HibernateException e) {
-//         if (tx!=null) tx.rollback();
-//         e.printStackTrace(); 
-//      }finally {
-//         session.close(); 
-//      }
-//   }
+   public void updateDeck(Integer deckId, String name){
+      Session session = HibernateUtil.getSessionFactory().openSession();
+      Transaction tx = null;
+      try{
+         tx = session.beginTransaction();
+         Deck deck = 
+                    (Deck)session.get(Deck.class, deckId); 
+         deck.setName(name);
+		 session.update(deck); 
+         tx.commit();
+      }catch (HibernateException e) {
+         if (tx!=null) tx.rollback();
+         e.printStackTrace(); 
+      }finally {
+         session.close(); 
+      }
+   }
 //   
-//   public void deleteItem(Integer itemId){
-//      Session session = HibernateUtil.getSessionFactory().openSession();
-//      Transaction tx = null;
-//      try{
-//         tx = session.beginTransaction();
-//         Item item = 
-//                   (Item)session.get(Item.class, itemId); 
-//         session.delete(item); 
-//         tx.commit();
-//      }catch (HibernateException e) {
-//         if (tx!=null) tx.rollback();
-//         e.printStackTrace(); 
-//      }finally {
-//         session.close(); 
-//      }
-//   }
+   public void deleteDeck(Integer deckId){
+      Session session = HibernateUtil.getSessionFactory().openSession();
+      Transaction tx = null;
+      try{
+         tx = session.beginTransaction();
+         Deck deck = 
+                   (Deck)session.get(Deck.class, deckId); 
+         session.delete(deck); 
+         tx.commit();
+      }catch (HibernateException e) {
+         if (tx!=null) tx.rollback();
+         e.printStackTrace(); 
+      }finally {
+         session.close(); 
+      }
+   }
 }

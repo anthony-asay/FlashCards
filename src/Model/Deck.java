@@ -27,7 +27,7 @@ public class Deck  implements java.io.Serializable {
     
     @Override
     public String toString(){
-        return "{\"id\":\""+this.id+"\",\"user\":\""+this.user.getId()+"\",\"name\":\""+this.name+"\",\"scores\":\""+this.scores.toString()+"\",\"flashcards\":\""+this.flashcards.toString()+"\"}";
+        return "{\"id\":\""+this.id+"\",\"id_user\":\""+this.user.getId()+"\",\"name\":\""+this.name+"\",\"scores\":\""+this.scores.toString()+"\",\"flashcards\":\""+this.flashcards.toString()+"\"}";
     }
 
     public Session acquireSession() {
@@ -48,6 +48,13 @@ public class Deck  implements java.io.Serializable {
         String query = "from Deck where id_user="+user.getId();
         List<Deck> list = executeHQLQuery(query);
         return list;
+    }
+    
+    public Deck getDeck(Integer id)
+    {
+        String query = "from Deck where id="+id;
+        List<Deck> list = executeHQLQuery(query);
+        return list.get(0);
     }
      
     private List executeHQLQuery(String hql) 
